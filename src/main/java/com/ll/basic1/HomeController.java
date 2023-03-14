@@ -71,6 +71,19 @@ public class HomeController {
         return id + "번 사람은 존재하지 않습니다.";
     }
 
+    @GetMapping("/home/modifyPerson")
+    @ResponseBody
+    public String modifyPerson(int id, String name, int age){
+        for(Person p : person){
+            if (p.getId() == id) {
+                p.setName(name);
+                p.setAge(age);
+                return id + "번 사람이 수정되었습니다.";
+            }
+        }
+        return id + "번 사람은 존재하지 않습니다.";
+    }
+
 
     @GetMapping("/home/people")
     @ResponseBody
@@ -252,6 +265,7 @@ class CarV2 {
 
 @AllArgsConstructor
 @Getter
+@Setter
 class Person{
     private static int lastId = 0;
     private final int id;
