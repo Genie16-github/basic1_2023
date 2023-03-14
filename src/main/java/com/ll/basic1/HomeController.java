@@ -13,12 +13,10 @@ import java.util.*;
 @Controller
 public class HomeController {
     private int i;
-    private int cnt;
-    List<Map<String,Object>> person = new ArrayList<>();
+    List<Person> person = new ArrayList<>();
 
     public HomeController() {
         i = 0;
-        cnt = 1;
     }
 
     @GetMapping("/home/main")
@@ -54,19 +52,29 @@ public class HomeController {
     @GetMapping("/home/addPerson")
     @ResponseBody
     public String addPerson(@RequestParam String name, int age){
-        Map<String, Object> map = new LinkedHashMap<>() {{
-            put("id", cnt);
-            put("name", name);
-            put("age", age);
-        }};
+        Person person1 = new Person(name, age);
 
-        person.add(map);
-        return (cnt++) + "번 사람이 추가되었습니다.";
+        person.add(person1);
+        return person1.getId() + "번 사람이 추가되었습니다.";
     }
+
+    @GetMapping("/home/removePerson")
+    @ResponseBody
+    public String removePerson(int id){
+        for(Person p : person){
+            if (p.getId() == id) {
+                person.remove(p);
+                return id + "번 사람이 삭제되었습니다.";
+            }
+        }
+
+        return id + "번 사람은 존재하지 않습니다.";
+    }
+
 
     @GetMapping("/home/people")
     @ResponseBody
-    public List<Map<String, Object>> showPeople(){
+    public List<Person> showPeople(){
         return person;
     }
 
@@ -242,3 +250,15 @@ class CarV2 {
     private final List<Integer> relatedIds;
 }
 
+@AllArgsConstructor
+@Getter
+class Person{
+    private static int lastId = 0;
+    private final int id;
+    private String name;
+    private int age;
+
+    Person(String name, int age){
+        this(++lastId, name, age);
+    }
+}
