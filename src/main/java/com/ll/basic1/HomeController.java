@@ -1,5 +1,8 @@
 package com.ll.basic1;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -90,6 +94,28 @@ public class HomeController {
     public List<Person> showPeople(){
         return person;
     }
+
+    @GetMapping("/home/cookie/increase")
+    @ResponseBody
+    public int showCookieIncrease(HttpServletRequest req, HttpServletResponse resp) throws IOException { // 리턴되는 int 값은 String 화 되어서 고객(브라우저)에게 전달된다.
+        int countInCookie = 0;
+
+        if (req.getCookies() != null) {
+            countInCookie = Arrays.stream(req.getCookies())
+                    .filter(cookie -> cookie.getName().equals("count"))
+                    .map(cookie -> cookie.getValue())
+                    .mapToInt(Integer::parseInt)
+                    .findFirst()
+                    .orElse(0);
+        }
+
+        int newCountInCookie = countInCookie + 1;
+
+        resp.addCookie(new Cookie("count", newCountInCookie + ""));
+
+        return newCountInCookie;
+    }
+
 
     @GetMapping("/home/returnBoolean")
     @ResponseBody
