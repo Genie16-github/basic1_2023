@@ -1,4 +1,4 @@
-package com.ll.basic1;
+package com.ll.basic1.boundedContext.home.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -98,22 +98,45 @@ public class HomeController {
     @GetMapping("/home/cookie/increase")
     @ResponseBody
     public int showCookieIncrease(HttpServletRequest req, HttpServletResponse resp) throws IOException { // 리턴되는 int 값은 String 화 되어서 고객(브라우저)에게 전달된다.
-        int countInCookie = 0;
+        int cntCookie = 0;
 
         if (req.getCookies() != null) {
-            countInCookie = Arrays.stream(req.getCookies())
-                    .filter(cookie -> cookie.getName().equals("count"))
-                    .map(cookie -> cookie.getValue())
+            cntCookie = Arrays.stream(req.getCookies())
+                    .filter(cookie -> cookie.getName().equals("cnt"))
+                    .map(Cookie::getValue)
                     .mapToInt(Integer::parseInt)
                     .findFirst()
                     .orElse(0);
         }
 
-        int newCountInCookie = countInCookie + 1;
+        int newCntCookie = ++cntCookie;
 
-        resp.addCookie(new Cookie("count", newCountInCookie + ""));
+        resp.addCookie(new Cookie("cnt", newCntCookie + ""));
 
-        return newCountInCookie;
+        return newCntCookie;
+    }
+
+    @GetMapping("member/login")
+    @ResponseBody
+    public List<Login> loginResult(String username, String password){
+        List<Login> lr = new ArrayList<>();
+        Login login = new Login("0", "null");
+        if (username.equals("user1")){
+            if (password.equals("1234")){
+                login.setResultCode("S-1");
+                login.setMsg("user1 님 환영합니다.");
+            }
+            else{
+                login.setResultCode("F-1");
+                login.setMsg("비밀번호가 일치하지 않습니다.");
+            }
+        }
+        else{
+            login.setResultCode("F-2");
+            login.setMsg(username + "(은)는 존재하지 않는 회원입니다.");
+        }
+        lr.add(login);
+        return lr;
     }
 
 
@@ -301,4 +324,13 @@ class Person{
     Person(String name, int age){
         this(++lastId, name, age);
     }
+}
+
+@AllArgsConstructor
+@Getter
+@Setter
+class Login{
+    private String resultCode;
+    private String msg;
+
 }
