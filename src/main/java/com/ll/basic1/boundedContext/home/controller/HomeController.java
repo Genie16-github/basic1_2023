@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.IOException;
 import java.util.*;
 
-@Controller
 public class HomeController {
     private int i;
     List<Person> person = new ArrayList<>();
