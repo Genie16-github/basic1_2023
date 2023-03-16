@@ -47,7 +47,12 @@ public class MemberController {
     @ResponseBody
     public RsData logout(HttpServletRequest req, HttpServletResponse resp){
         Rq rq = new Rq(req, resp);
-        rq.removeCookie("login");
+        boolean cookieRemoved = rq.removeCookie("login");
+
+        if (!cookieRemoved){
+            return RsData.of("S-2", "이미 로그아웃 상태입니다.");
+        }
+
         return RsData.of("S-1", "로그아웃 되었습니다.");
     }
 

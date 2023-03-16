@@ -14,15 +14,22 @@ public class Rq {
     private final HttpServletRequest req;
     private final HttpServletResponse resp;
 
-    public void removeCookie(String login) {
+    public boolean removeCookie(String login) {
         if (req.getCookies() != null) {
-            Arrays.stream(req.getCookies())
-                    .filter(cookie -> cookie.getName().equals(login))
-                    .forEach(cookie -> {
-                        cookie.setMaxAge(0);
-                        resp.addCookie(cookie);
-                    });
+            Cookie cookie = Arrays.stream(req.getCookies())
+                    .filter(c -> c.getName().equals(login))
+                    .findFirst()
+                    .orElse(null);
+
+            if (cookie != null){
+                cookie.setMaxAge(0);
+                resp.addCookie(cookie);
+
+                return true;
+            }
         }
+
+        return false;
     }
 
     public String getCookie(String name, String defaultValue) {
