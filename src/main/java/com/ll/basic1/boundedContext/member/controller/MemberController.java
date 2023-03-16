@@ -6,6 +6,7 @@ import com.ll.basic1.boundedContext.member.entity.Member;
 import com.ll.basic1.boundedContext.member.service.MemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -55,18 +56,14 @@ public class MemberController {
     }
 
     @GetMapping("/member/me")
-    @ResponseBody
-    public RsData showMe() {
-        long loginMemberId = rq.getSessionAsLong("loginMemberId", 0);
+    public String showMe(Model model) {
+        long loginedMemberId = rq.getLoginMemberId();
 
-        boolean isLogin = loginMemberId > 0;
+        Member member = memberService.findById(loginedMemberId);
 
-        if (!isLogin)
-            return RsData.of("F-1", "로그인 후 이용해주세요.");
+        model.addAttribute("member", member);
 
-        Member member = memberService.findById(loginMemberId);
-
-        return RsData.of("S-1", "당신의 username(은)는 %s 입니다.".formatted(member.getUsername()));
+        return "usr/member/me";
     }
 
     // 디버깅용 함수
