@@ -1,6 +1,8 @@
 server:
   port: 8010 # 포트번호 8010
 spring:
+  profiles:
+    active: dev # 기본적으로 dev 환경임을 표시
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/basic1_dev?serverTimezone=Asia/Seoul
